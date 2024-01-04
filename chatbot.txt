@@ -1,0 +1,29 @@
+import streamlit as st
+import spotipy
+from spotipy.oauth2 import SpotifyOAuth
+
+# Initialize the Spotify API client
+sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
+    client_id='YOUR_CLIENT_ID',
+    client_secret='YOUR_CLIENT_SECRET',
+    redirect_uri='YOUR_REDIRECT_URI',
+    scope='user-library-read'  # Specify the necessary scope for accessing user library
+))
+
+# Create a function to search and display tracks
+def search_spotify_tracks(query):
+    results = sp.search(query, limit=10, type='track')
+    
+    for track in results['tracks']['items']:
+        st.write(f"Track: {track['name']}")
+        st.write(f"Artist: {', '.join([artist['name'] for artist in track['artists']])}")
+        st.write(f"Album: {track['album']['name']}")
+        st.write(f"Preview URL: {track['preview_url']}")
+        st.write("------")
+
+# Streamlit app
+st.title("Spotify Music Search")
+
+query = st.text_input("Search for music on Spotify")
+if query:
+    search_spotify_tracks(query)
